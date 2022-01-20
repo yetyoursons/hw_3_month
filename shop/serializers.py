@@ -3,6 +3,7 @@ from .models import Category
 from .models import Tag
 from .models import Product
 from .models import Review
+from rest_framework.exceptions import ValidationError
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -60,3 +61,21 @@ class ProductDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
         fields = ['id', 'title', 'tags', 'price', 'category', 'description']
+
+
+class ProductCreateSerializer(serializers.Serializer):
+    title = serializers.CharField(min_length=3, max_length=10)
+    description = serializers.CharField(required=False)
+    price = serializers.IntegerField(default=0)
+    category = serializers.BooleanField()
+    tags = serializers.ListField(child=serializers.IntegerField())
+
+class TagCreateSerializer(serializers.Serializer):
+    name = serializers.CharField()
+    is_active = serializers.BooleanField()
+
+    def validate_name(self, name):
+        tags = Tag.objects.filter(name = name)
+        if tags:
+            raise ValidationError("Tag already existed")
+        return name
