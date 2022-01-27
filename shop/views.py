@@ -4,6 +4,7 @@ from .serializers import CategorySerializer, TagSerializer, ProductSerializer, R
 from .serializers import ProductReviewSerializer, ProductTagSerializer, ProductDetailSerializer, ProductCreateSerializer
 from .models import Category, Tag, Product, Review
 from rest_framework import status
+from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
 
 
 @api_view(['GET'])
@@ -78,3 +79,22 @@ def product_tag_view(request):
     category = Product.objects.all()
     data = ProductTagSerializer(category, many=True).data
     return Response(data=data)
+
+
+class CategoryCreateListAPIView(ListCreateAPIView):
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
+
+class ProductDetailUpdateDeleteAPIView(RetrieveUpdateDestroyAPIView):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
+    lookup_field = 'id'
+
+class TagCreateListAPIView(ListCreateAPIView):
+    queryset = Category.objects.all()
+    serializer_class = TagSerializer
+
+class ReviewDetailUpdateDeleteAPIView(RetrieveUpdateDestroyAPIView):
+    queryset = Review.objects.all()
+    serializer_class = ReviewSerializer
+    lookup_field = 'id'
